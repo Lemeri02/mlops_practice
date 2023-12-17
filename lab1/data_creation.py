@@ -1,43 +1,39 @@
+import os
+from typing import Optional
+
 import numpy as np
 import pandas as pd
-import os
+from sklearn.model_selection import train_test_split
+
+TRAIN_DATA_PATH = 'train'
+TEST_DATA_PATH = 'test'
 
 
-TRAIN_DATA_PATH='train'
-TEST_DATA_PATH='test'
-TRAIN_DATA_SIZE=1000
-TEST_DATA_SIZE=600
+# # Создание папок train и test
+os.makedirs(TRAIN_DATA_PATH, exist_ok=True)
+os.makedirs(TEST_DATA_PATH, exist_ok=True)
 
 
-# Создание папок train и test
-if not os.path.exists(TRAIN_DATA_PATH):
-    os.makedirs(TRAIN_DATA_PATH)
-if not os.path.exists(TEST_DATA_PATH):
-    os.makedirs(TEST_DATA_PATH)
+def create_data(n_samples: int, noise: int = 0, random_state: Optional[int] = None) -> pd.DataFrame:
+    np.random.seed(random_state)
+    X = np.linspace(0, 2 * np.pi, n_samples)
+    y = np.sin(X) + noise * np.random.normal(0, 1, n_samples)
+    return pd.DataFrame({'X': X, 'y': y})
 
 
-def create_train_data():
-  train_data = pd.DataFrame(generate_random_data(TRAIN_DATA_SIZE))
-  train_data['label'] = np.where(train_data['temperature'] > 30, 1, 0)
-  train_data.to_csv(f'{TRAIN_DATA_PATH}/train_data.csv', index=False)
-  return train_data
+if __name__ == '__main__':
 
+    n_samples = 999
+    n_datasets = int(os.getenv('DATASETS_NUMBER', 10))
+    noise_frac = 0.1
+    n_anomalies = int(n_samples * 0.03)
 
-def create_test_data():
-  test_data = pd.DataFrame(generate_random_data(TEST_DATA_SIZE))
-  test_data['label'] = np.where(test_data['temperature'] > 30, 1, 0)
-  test_data.to_csv(f'{TEST_DATA_PATH}/test_data.csv', index=False)
-  return test_data
+    data_sets = [create_data(n_samples, noise=noise_frac, random_state=n) for n in range(n_datasets)]
+    anomalies = np.random.choice(len(data_sets[-1]), size=n_anomalies, replace=False)
+    data_sets[-1].loc[anomalies, 'y'] = data_sets[-1].loc[anomalies, 'y'] ** 2
 
+    for i, data in enumerate(data_sets):
+        train, test = train_test_split(data, test_size=0.2, random_state=i)
 
-def generate_random_data(size):
-  data = {
-   'temperature': np.random.normal(loc=25, scale=5, size=size),
-   'humidity': np.random.normal(loc=50, scale=10, size=size),
-   'pressure': np.random.normal(loc=1000, scale=50, size=size)
-  }
-  return data
-   
-
-create_train_data()
-create_test_data()
+        train.to_csv(f'train/{i}.csv', index=False)
+        test.to_csv(f'test/{i}.csv', index=False)
