@@ -1,20 +1,32 @@
 pipeline {
+
     agent any
 
     stages {
-        stage('Build') {
+
+        stage('Create data directory') {
             steps {
-                echo 'Building...'
+                sh 'mkdir -p lab2/data'
             }
         }
-        stage('Test') {
+        stage('Create model directory') {
             steps {
-                echo 'Testing...'
+                sh 'mkdir -p lab2/model'
             }
         }
-        stage('Deploy') {
+        stage('Fetch and prepare data') {
             steps {
-                echo 'Deploying...'
+                sh 'python3 lab2/fetch_data.py'
+            }
+        }
+        stage('Train model') {
+            steps {
+                sh 'python3 lab2/train_model.py'
+            }
+        }
+        stage('Evaluate model') {
+            steps {
+                sh 'python3 lab2/evaluate_model.py'
             }
         }
     }
