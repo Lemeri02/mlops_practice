@@ -28,3 +28,5 @@ docker run --name jenkins-blueocean --restart=on-failure --detach \
 ```commandline
 sudo docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
 ```
+
+В Jenkins установить Python 1.3  в управлении плагинами
