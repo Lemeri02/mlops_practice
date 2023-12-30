@@ -1,32 +1,50 @@
-```commandline
-https://www.jenkins.io/doc/book/installing/docker/
-```
+## MLOps. Практическое задание №2
 
-```commandline
-docker network create jenkins
-```
+0) Подготовил репозиторий на гитхабе. Подготовил код.
 
-```commandline
-docker build -t myjenkins-blueocean:2.426.2-1 .
-```
+1) Развернул локально виртуальную машину (через KVM) (хост Fedora 39, виртуальная машина Ubuntu 20.04) [инструкция по установке libvirt virt-manager и т.д.](https://computingforgeeks.com/how-to-install-kvm-on-fedora/)
+![](assets/2023-12-31_00-27.png)
 
-```commandline
-docker run --name jenkins-blueocean --restart=on-failure --detach \
-  --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
-  --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 \
-  --publish 8080:8080 --publish 50000:50000 \
-  --volume jenkins-data:/var/jenkins_home \
-  --volume jenkins-docker-certs:/certs/client:ro \
-  myjenkins-blueocean:2.426.2-1
-```
+2) Установил Jenkins по инструкции
 
+https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+
+3) Установил Java для Jenkins 
+```commandline
+sudo apt update
+sudo apt install fontconfig openjdk-17-jre
+```
+4) Устанавил доп. программы
 
 ```commandline
-0.0.0.0:8080 или localhost:8080
+sudo apt install python3
+sudo apt install pip
+pip install numpy
+pip install pandas
+pip install scikit-learn
+
+sudo apt install curl
+sudo apt install git
 ```
 
+5) Полезные команды для управления Jenkins:
 ```commandline
-sudo docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
+sudo systemctl status jenkins.service 
+sudo systemctl restart jenkins.service
+sudo systemctl start jenkins.service   
+sudo systemctl stop jenkins.service 
 ```
 
-В Jenkins установить Python 1.3  в управлении плагинами
+6) sudo cat /var/lib/jenkins/secrets/initialAdminPassword - узнать токен для доступа к UI Jenkins
+
+7) Попадаем в UI Jenkins http://localhost:8080 (в моем случае http://192.168.124.228:8081/)
+8) Устанавливаем плагины
+9) Создаем Item -> Pipeline
+10) В настройках созданного Pipeline указываем ссылки на Git репозиторий, сохраняем
+![](assets/screencapture-192-168-124-228-8081-job-jenkins-pipeline-configure-2023-12-31-00_19_39.png)
+12) Запускаем сборку
+
+![](assets/2023-12-31_00-17.png)
+
+
+![](assets/2023-12-31_00-18.png)

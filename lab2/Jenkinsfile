@@ -2,11 +2,6 @@ pipeline {
 
     agent any
     stages {
-        stage('Build Dependencies111') {
-            steps {
-                sh "ls -la"
-            }
-        }
         stage('Create data directory') {
             steps {
                 sh 'mkdir -p lab2/data'
@@ -15,12 +10,6 @@ pipeline {
         stage('Create model directory') {
             steps {
                 sh 'mkdir -p lab2/model'
-            }
-        }
-
-                stage('Build Dependencies122') {
-            steps {
-                sh "ls -la lab2/"
             }
         }
         stage('Install requirements') {
