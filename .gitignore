@@ -4,3 +4,5 @@ target
 **/*.iml
 **/.env
 **/venv
+__pycache__
+.pytest_cache
