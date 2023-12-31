@@ -13,7 +13,7 @@ sudo apt install git
 
 ```
 pip install dvc
-pip install "dvc[gdrive]
+pip install dvc[gdrive]
 ```
 
 ```
